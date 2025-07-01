@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gửi vị trí</title>
+</head>
+<body>
+  <h1>Gửi vị trí đến server</h1>
+  <button onclick="sendLocation()">📍 Gửi vị trí</button>
+
+  <script>
+    function sendLocation() {
+      if (!navigator.geolocation) {
+        alert("Trình duyệt không hỗ trợ định vị.");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        const response = await fetch('http://localhost:3000/location', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lat, lng })
+        });
+
+        const result = await response.json();
+        alert(result.status);
+      });
+    }
+  </script>
+</body>
+</html>
