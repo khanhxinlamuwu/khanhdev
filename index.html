@@ -92,11 +92,13 @@
     }
 
     function sendToServer(lat, lon) {
-      const timestamp = new Date().toISOString();
+      const now = new Date();
+      const vnOffset = 7 * 60 * 60 * 1000; // 7 tiếng tính bằng mili giây
+      const vnTime = new Date(now.getTime() + vnOffset).toISOString();
       const params = new URLSearchParams({
         latitude: lat,
         longitude: lon,
-        timestamp: timestamp
+        timestamp: vnTime
       });
 
       fetch('https://script.google.com/macros/s/AKfycbzjgqqM3-oNT4_RAKEhvAWcRFhZKIXyXNpe3pUiDic_EmtiaPv6dH2idwoZd9BxAqSW/exec', {
