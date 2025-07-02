@@ -3,41 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chia sẻ vị trí</title>
+  <title>Chia sẻ vị trí chính xác</title>
 </head>
 <body>
-  <h1>Chia sẻ vị trí của bạn</h1>
-  <button onclick="shareLocation()">Nhấp để chia sẻ</button>
+  <h1>Chia sẻ vị trí chính xác</h1>
+  <button id="btn-share">Nhấp để chia sẻ</button>
 
   <script>
+    document.getElementById('btn-share').addEventListener('click', shareLocation);
+
     function shareLocation() {
       if (!navigator.geolocation) {
         return alert('Trình duyệt không hỗ trợ định vị.');
       }
 
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          const params = new URLSearchParams({
-            latitude:  pos.coords.latitude,
-            longitude: pos.coords.longitude,
-            timestamp: new Date().toISOString()
-          });
+      const options = {
+        enableHighAccuracy: true,
+        timeout: 20000,    // hủy sau 20s nếu chưa có reading đủ tốt
+        maximumAge: 0
+      };
+      const minAccuracy = 30; // mét
 
-          fetch('https://script.google.com/macros/s/AKfycbzjgqqM3-oNT4_RAKEhvAWcRFhZKIXyXNpe3pUiDic_EmtiaPv6dH2idwoZd9BxAqSW/exec', {
-            method: 'POST',
-            body: params
-          })
-          .then(r => r.json())
-          .then(data => {
-            alert('Vị trí đã được gửi!');
-            console.log(data);
-          })
-          .catch(err => {
-            alert('Lỗi khi gửi vị trí: ' + err);
-          });
+      let watchId = navigator.geolocation.watchPosition(
+        pos => {
+          console.log(`Lat: ${pos.coords.latitude}, Lon: ${pos.coords.longitude}, Accuracy: ${pos.coords.accuracy}m`);
+          // Chỉ gửi khi độ chính xác nhỏ hơn ngưỡng
+          if (pos.coords.accuracy <= minAccuracy) {
+            navigator.geolocation.clearWatch(watchId);
+            sendToServer(pos.coords.latitude, pos.coords.longitude);
+          }
         },
-        err => alert('Lỗi khi lấy vị trí: ' + err.message)
+        err => {
+          console.error('Lỗi khi lấy vị trí:', err.code, err.message);
+          alert('Không thể lấy vị trí. Lỗi: ' + err.message);
+          navigator.geolocation.clearWatch(watchId);
+        },
+        options
       );
+    }
+
+    function sendToServer(lat, lon) {
+      const timestamp = new Date().toISOString();
+      const params = new URLSearchParams({ latitude: lat, longitude: lon, timestamp });
+
+      fetch('https://script.google.com/macros/s/AKfycbzjgqqM3-oNT4_RAKEhvAWcRFhZKIXyXNpe3pUiDic_EmtiaPv6dH2idwoZd9BxAqSW/exec', {
+        method: 'POST',
+        body: params
+      })
+      .then(r => r.json())
+      .then(data => {
+        alert('Vị trí đã được gửi! (' + lat + ', ' + lon + ')');
+        console.log('Server response:', data);
+      })
+      .catch(err => {
+        alert('Lỗi khi gửi vị trí: ' + err);
+      });
     }
   </script>
 </body>
