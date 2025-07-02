@@ -11,40 +11,33 @@
 
   <script>
     function shareLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-            const timestamp = new Date().toISOString();
-
-            fetch('https://script.google.com/macros/s/AKfycbzjgqqM3-oNT4_RAKEhvAWcRFhZKIXyXNpe3pUiDic_EmtiaPv6dH2idwoZd9BxAqSW/exec', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                latitude: latitude,
-                longitude: longitude,
-                timestamp: timestamp
-              })
-            })
-            .then(response => response.json())
-            .then(data => {
-              alert('Vị trí đã được gửi!');
-              console.log('Response:', data);
-            })
-            .catch(error => {
-              alert('Lỗi khi gửi vị trí: ' + error.message);
-            });
-          },
-          (error) => {
-            alert('Lỗi khi lấy vị trí: ' + error.message);
-          }
-        );
-      } else {
-        alert('Trình duyệt không hỗ trợ định vị.');
+      if (!navigator.geolocation) {
+        return alert('Trình duyệt không hỗ trợ định vị.');
       }
+
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const params = new URLSearchParams({
+            latitude:  pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            timestamp: new Date().toISOString()
+          });
+
+          fetch('https://script.google.com/macros/s/AKfycb…/exec', {
+            method: 'POST',
+            body: params
+          })
+          .then(r => r.json())
+          .then(data => {
+            alert('Vị trí đã được gửi!');
+            console.log(data);
+          })
+          .catch(err => {
+            alert('Lỗi khi gửi vị trí: ' + err);
+          });
+        },
+        err => alert('Lỗi khi lấy vị trí: ' + err.message)
+      );
     }
   </script>
 </body>
