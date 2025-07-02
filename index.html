@@ -97,6 +97,10 @@
 
       fetch('https://script.google.com/macros/s/AKfycbzjgqqM3-oNT4_RAKEhvAWcRFhZKIXyXNpe3pUiDic_EmtiaPv6dH2idwoZd9BxAqSW/exec', {
         method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
         body: params
       })
       .then(r => r.json())
@@ -106,6 +110,7 @@
       .catch(err => {
         alert('Lỗi khi gửi vị trí: ' + err);
       });
+    }
   </script>
 </body>
 </html>
