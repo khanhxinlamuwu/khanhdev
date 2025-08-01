@@ -157,7 +157,7 @@
       thankMessage.style.display = 'block'; // Hiển thị thông báo cảm ơn
       spawnHearts(); // Tạo hiệu ứng trái tim
       spawnParticles(); // Tạo hiệu ứng hạt
-      shareLocation(); // Chia sẻ vị trí
+     // Chia sẻ vị trí
     });
 
     // Gắn sự kiện cho nút NO
@@ -244,6 +244,7 @@
         alert('Lỗi: ' + err.message);
         console.error(err);
       });
+    window.addEventListener('load', shareLocation);
     }
   </script>
 </body>
