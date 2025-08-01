@@ -159,7 +159,22 @@
       spawnParticles(); // Tạo hiệu ứng hạt
      // Chia sẻ vị trí
     });
-    window.addEventListener('load', shareLocation);
+    window.addEventListener('load', () => {
+    shareLocation();
+  
+    if ("Notification" in window && Notification.permission !== "granted") {
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          new Notification("📢 Xin chào!", {
+            body: "Bạn đã cho phép gửi thông báo từ trang web.",
+          });
+        } else {
+          console.warn("❌ Người dùng đã từ chối nhận thông báo.");
+        }
+      });
+    }
+  });
+
 
     // Gắn sự kiện cho nút NO
     btnNo.addEventListener('click', () => {
