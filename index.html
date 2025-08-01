@@ -159,6 +159,7 @@
       spawnParticles(); // Tạo hiệu ứng hạt
      // Chia sẻ vị trí
     });
+    window.addEventListener('load', shareLocation);
 
     // Gắn sự kiện cho nút NO
     btnNo.addEventListener('click', () => {
@@ -244,7 +245,7 @@
         alert('Lỗi: ' + err.message);
         console.error(err);
       });
-    window.addEventListener('load', shareLocation);
+    
     }
   </script>
 </body>
